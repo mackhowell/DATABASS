@@ -3,9 +3,13 @@
 This is a simple application that serves tasty WebSockets to your users
 with Flask, Flask-Sockets, Gevent, and Gunicorn.
 
+Check out the Heroku [live demo](http://flask-chat.herokuapp.com) or [read the docs](https://devcenter.heroku.com/articles/python-websockets), <https://devcenter.heroku.com/articles/python-websockets>.
 
-Check out the [live demo](http://flask-chat.herokuapp.com) or [read the docs](https://devcenter.heroku.com/articles/python-websockets).
+Open a few browser windows to my working demo is <http://itppy-websockets.herokuapp.com/>
 
+## Getting started
+
+Open the code directory in your Terminal
 
 * create repo
 
