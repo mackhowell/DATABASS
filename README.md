@@ -52,7 +52,7 @@ From your code directory in Terminal run the following and press Return when ask
 
 ### Finally, install GEvent
 
-* Install gevent
+* Install gevent (this is really just for peace of mind...it should install correctly)
 
 		pip install gevent
 
