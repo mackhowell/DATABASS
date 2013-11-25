@@ -24,16 +24,23 @@ Check out the [live demo](http://flask-chat.herokuapp.com) or [read the docs](ht
 
 		heroku config -s > .env
 
+## Getting GEvent installed
 
-Technical nonsense
+I had some issues installing GEvent - here are all the steps that worked for me
+
+### Homebrew, you need it.
 
 * Install [Homebrew](http://brew.sh/)
+
+### Fix homebrew, just in case
+
 * Once homebrew is installed, run Ruby script to fix linking (just in case homebrew linking is borked)
 
 From your code directory in Terminal run the following and press Return when asked
 
 	ruby homebrewlinkfix.rb
 
+### Install libevent
 
 * Install libevent <http://stackoverflow.com/questions/7630388/how-can-i-install-the-python-library-gevent-on-mac-os-x-lion/19574385#19574385>
 
@@ -43,20 +50,32 @@ From your code directory in Terminal run the following and press Return when ask
 	
 		export CFLAGS="-I /usr/local/Cellar/libevent/2.0.21/include -L /usr/local/Cellar/libevent/2.0.21/lib"
 
+### Finally, install GEvent
+
 * Install gevent
 
 		pip install gevent
 
 
-* create virutalenv, activate and install requirements
+## Install web app requirements
 
-		virtualenv venv
-		. venv/bin/activate
-		pip install -r requirements
+This will create virutalenv, activate and install requirements
 
+	virtualenv venv
+	. venv/bin/activate
+	pip install -r requirements
 
 ## Start the server
 
 	foreman start
 
+## Visit at <http://localhost:5000>
+
+## Push to Heroku
+
+	git push heroku master
+
+Visit web app
+
+	heroku open
  	
