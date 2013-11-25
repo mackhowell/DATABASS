@@ -55,5 +55,8 @@ From your code directory in Terminal run the following and press Return when ask
 		pip install -r requirements
 
 
+## Start the server
+
+	foreman start
 
  	
