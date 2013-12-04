@@ -5,8 +5,8 @@ inbox.onmessage = function(message) {
   var data = JSON.parse(message.data);
   $("#chat-text").append("<div class='panel panel-default'><div class='panel-heading'>" +
   $('<span/>').text(data.handle).html() + "</div><div class='panel-body'>" +
-  $('<span/>').text(data.text).html() + "</div></div>" +
-  $('<span/>').text(data.avatar).html() + "</div></div>");
+  $('<span/>').text(data.text).html() + "</div></div>");
+  // $('<span/>').text(data.avatar).html() + "</div></div>");
 
   // //added this
   // $("#testImage").show();
@@ -52,11 +52,13 @@ $("#input-form").on("submit", function(event) {
   var handle = $("#input-handle")[0].value;
   var text   = $("#input-text")[0].value;
   outbox.send(JSON.stringify({ handle: handle, text: text }));
-  // outbox.send(avatar);
   $("#input-text")[0].value = "";
 
+
+
   var testGif = "../static/images/982897.gif"
-  document.write("<img src=" + testGif + ">");
+  $(document.body).append("<img src =" + testGif + ">");
+
 });
 
 window.onload=function(){
