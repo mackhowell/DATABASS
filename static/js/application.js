@@ -1,38 +1,67 @@
 var inbox = new ReconnectingWebSocket("ws://"+ location.host + "/receive");
 var outbox = new ReconnectingWebSocket("ws://"+ location.host + "/submit");
 
+var possibleImages = ["982897.gif", "brandmark.gif", "crate.gif", "elephant.gif", "frog.gif", "stars.gif"];
+
+var myID = "";
+var myImage = "nothing.png";
+
+//jQuery speak for onload
+$(function(){
+  myID = randomString();
+  myImage = randomImage();
+});
+
+//generates a unique ID for each user. 
+function randomString(){
+  var randString = "";
+  var possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (var i = 0 ; i < 12; i++){
+    var index = parseInt(Math.random()*possibleLetters.length);
+    var randLetter = possibleLetters.charAt(index);
+    randString+=randLetter;
+  }
+  return randString;
+}
+
+//choose a random image
+function randomImage(){
+  var index = parseInt(Math.random()*possibleImages.length);
+  return possibleImages[index];
+}
+
+var lastMove = 0;
+var eventThrottle = 1000;
+$("body").click(function(event) {
+  console.log("hihi");
+    var position = {
+      x : event.clientX,
+      y : event.clientY
+    };
+    outbox.send(JSON.stringify({ 
+      id : myID,
+      image : myImage,
+      position : position
+    }));
+ });
+
+
 inbox.onmessage = function(message) {
   var data = JSON.parse(message.data);
-  $("#chat-text").append("<div class='panel panel-default'><div class='panel-heading'>" +
-  $('<span/>').text(data.handle).html() + "</div><div class='panel-body'>" +
-  $('<span/>').text(data.text).html() + "</div></div>");
-  // $('<span/>').text(data.avatar).html() + "</div></div>");
 
-  // //added this
-  // $("#testImage").show();
-
-  //     $.ajax({ 
-  //     type: "GET", 
-  //     url: "media.giphy.com/media/CdAh3Sh0Mvtdu/giphy.gif", 
-  //     dataType: "jsonp", 
-  //     cache : false, 
-  //     jsonp : "onJSONPLoad", 
-  //     jsonpCallback: "newarticlescallback", 
-  //     crossDomain: "true", 
-  //     success: function(response) { 
-  //       $("#LoadingImage").hide();
-  //       alert("Success"); 
-  //     }, 
-  //     error: function (xhr, status) {  
-  //       $("#LoadingImage").hide();
-  //       alert('Unknown error ' + status); 
-  //     }    
-  //  });  
-
-
-  // $("#chat-text").stop().animate({
-  //   scrollTop: $('#chat-text')[0].scrollHeight
-  // }, 800);
+  var picElement = $("#"+data.id);
+  //if there's already an html element
+  if (picElement.length > 0){
+    picElement.animate({
+      left : data.position.x,
+      top: data.position.y
+    }, 1000, "linear");
+  //else make one
+  } else {
+    //first time
+    var el = $("<div></div>").appendTo($("#container")).attr({"id" : data.id, "class" : "partyGoer"});
+    el.append("<img src ='../static/images/" + data.image + "'>");
+  }
 };
 
 inbox.onclose = function(){
@@ -45,22 +74,15 @@ outbox.onclose = function(){
     this.outbox = new WebSocket(outbox.url);
 };
 
+
 $("#input-form").on("submit", function(event) {
   event.preventDefault();
-  //added this
-  // var avatar = $("#avatar").show();
-  var handle = $("#input-handle")[0].value;
-  var text   = $("#input-text")[0].value;
-  outbox.send(JSON.stringify({ handle: handle, text: text }));
-  $("#input-text")[0].value = "";
-
-
-
-  var testGif = "../static/images/982897.gif"
-  $(document.body).append("<img src =" + testGif + ">");
-
+  outbox.send(JSON.stringify({ 
+    id : myID,
+    image : myImage,
+    position : {
+      x : 0,
+      y : 0
+    }
+  }));
 });
-
-window.onload=function(){
-  console.log("HEIII");
-};

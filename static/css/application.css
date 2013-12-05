@@ -1,4 +1,12 @@
-#chat-text {
-  overflow: auto;
-  height: 500px;
+#container {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.partyGoer {
+	position: absolute;
+	top: 0px;
+	left: 0px;
 }
