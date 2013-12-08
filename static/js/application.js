@@ -2,14 +2,17 @@ var inbox = new ReconnectingWebSocket("ws://"+ location.host + "/receive");
 var outbox = new ReconnectingWebSocket("ws://"+ location.host + "/submit");
 
 var possibleImages = ["982897.gif", "brandmark.gif", "crate.gif", "elephant.gif", "frog.gif", "stars.gif"];
+var possibleSounds = ["beat.wav", "synth.wav"];
 
 var myID = "";
 var myImage = "nothing.png";
+var mySound = "nothing.wav";
 
 //jQuery speak for onload
 $(function(){
   myID = randomString();
   myImage = randomImage();
+  mySound = randomSound();
 });
 
 //generates a unique ID for each user. 
@@ -30,6 +33,11 @@ function randomImage(){
   return possibleImages[index];
 }
 
+function randomSound(){
+  var index = parseInt(Math.random()*possibleSounds.length);
+  return possibleSounds[index];
+}
+
 var lastMove = 0;
 var eventThrottle = 1000;
 $("body").click(function(event) {
@@ -41,7 +49,8 @@ $("body").click(function(event) {
     outbox.send(JSON.stringify({ 
       id : myID,
       image : myImage,
-      position : position
+      position : position,
+      sound : mySound
     }));
  });
 
@@ -61,6 +70,13 @@ inbox.onmessage = function(message) {
     //first time
     var el = $("<div></div>").appendTo($("#container")).attr({"id" : data.id, "class" : "partyGoer"});
     el.append("<img src ='../static/images/" + data.image + "'>");
+
+    // var elSound = $("<div></div>").appendTo($("#container")).attr({"id" : data.id});
+    // elSound.append("<img src ='../static/sounds/" + data.sound + "'>");
+    // elSound.play();
+    var playSound = new Audio (mySound);
+    playSound.play();
+    console.log("playSound= " + playSound);
   }
 };
 
