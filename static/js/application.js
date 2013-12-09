@@ -57,6 +57,8 @@ $("body").click(function(event) {
 
 inbox.onmessage = function(message) {
   var data = JSON.parse(message.data);
+  // var playSound = new Audio (mySound);
+  // playSound.load();
 
   var picElement = $("#"+data.id);
   //if there's already an html element
@@ -67,16 +69,18 @@ inbox.onmessage = function(message) {
     }, 1000, "linear");
   //else make one
   } else {
+    // console.log("MYSOUND: " + mySound);
+    // playSound.play();
+    // console.log("playSound= " + playSound);
     //first time
     var el = $("<div></div>").appendTo($("#container")).attr({"id" : data.id, "class" : "partyGoer"});
     el.append("<img src ='../static/images/" + data.image + "'>");
+    el.append("<audio src='../static/sounds/" + data.sound + "' autoplay loop preload='auto'>");
+    // console.log("DATA.SOUND= " + data.sound);
 
     // var elSound = $("<div></div>").appendTo($("#container")).attr({"id" : data.id});
     // elSound.append("<img src ='../static/sounds/" + data.sound + "'>");
     // elSound.play();
-    var playSound = new Audio (mySound);
-    playSound.play();
-    console.log("playSound= " + playSound);
   }
 };
 
@@ -96,6 +100,7 @@ $("#input-form").on("submit", function(event) {
   outbox.send(JSON.stringify({ 
     id : myID,
     image : myImage,
+    sound : mySound,
     position : {
       x : 0,
       y : 0
