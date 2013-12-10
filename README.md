@@ -1,44 +1,20 @@
-# Python Websockets Example: Chat
+Welcome to DATABASS!
+<br>
+<br>
+Databass is an online bass gallery where friends can meet, mingle, and mix. chat function coming soon!
 
-This is a simple application that serves tasty WebSockets to your users
-with Flask, Flask-Sockets, Gevent, and Gunicorn.
+by [mack](http://mackhowell.com) and [sarah](http://sarahrothberg.com)
 
-Check out the Heroku [live demo](http://flask-chat.herokuapp.com) or [read the docs](https://devcenter.heroku.com/articles/python-websockets), <https://devcenter.heroku.com/articles/python-websockets>.
 
-Open a few browser windows to my working demo is <http://itppy-websockets.herokuapp.com/>
+[GO THERE](www.database.herokuapp.com)
 
-## Getting started
+## HOW TO:
 
 Open the code directory in your Terminal
-
-* create repo
-
-		git init
-		git add .
-		
-		git commmit -am "initial commit"
-
-* create heroku app, install rediscloud, enable websockets
-
-		heroku create
-		heroku addons:add rediscloud
-		heroku labs:enable websockets
 
 * get rediscloud into .env
 
 		heroku config -s > .env
-
-## Getting GEvent installed
-
-I had some issues installing GEvent - here are all the steps that worked for me
-
-### Homebrew, you need it.
-
-* Install [Homebrew](http://brew.sh/)
-
-### Fix homebrew, just in case
-
-* Once homebrew is installed, run Ruby script to fix linking (just in case homebrew linking is borked)
 
 From your code directory in Terminal run the following and press Return when asked
 
