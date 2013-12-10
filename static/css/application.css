@@ -6,6 +6,11 @@
 	cursor: pointer;
 }
 
+#chat-text {
+  overflow: auto;
+  height: 500px;
+}
+
 .partyGoer {
 	position: absolute;
 	top: 0px;

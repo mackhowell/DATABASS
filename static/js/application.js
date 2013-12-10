@@ -1,12 +1,13 @@
 var inbox = new ReconnectingWebSocket("ws://"+ location.host + "/receive");
 var outbox = new ReconnectingWebSocket("ws://"+ location.host + "/submit");
 
-var possibleImages = ["bass__jurassic_park.gif", "bass_windows.gif"];
+var possibleImages = ["bass__jurassic_park.gif", "bass_windows.gif", "bass_dolls.gif", "bass_bootstrap.gif", "bass_eclipse.gif", "bass_beesandbombs.gif", "bass_daily_task.gif", "bass_tje.gif", "bass_city.gif", "bass_badblueprints.gif"];
 var possibleSounds = ["beat.wav", "synth.wav"];
 
 var myID = "";
 var myImage = "nothing.png";
 var mySound = "nothing.wav";
+var myText = "";
 
 //jQuery speak for onload
 $(function(){
@@ -38,6 +39,10 @@ function randomSound(){
   return possibleSounds[index];
 }
 
+function getChatMessage(){
+  return $(data.text);
+}
+
 var lastMove = 0;
 var eventThrottle = 1000;
 $("body").click(function(event) {
@@ -50,14 +55,27 @@ $("body").click(function(event) {
       id : myID,
       image : myImage,
       position : position,
-      sound : mySound
+      sound : mySound, 
     }));
  });
 
+//below is code to make chat send on pressing return key i think? 
+function inputKeyUp(e) {
+    e.which = e.which || e.keyCode;
+    if(e.which == 13) {
+      // myText = getChatMessage();
+      // outbox.send(JSON.stringify({ 
+      // text : myText
+    // }));
+var text   = $("#input-text")[0].value;
+  outbox.send(JSON.stringify({text: text }));
+  $("#input-text")[0].value = "";
+    }
+}
 
 inbox.onmessage = function(message) {
   var data = JSON.parse(message.data);
-
+// message's image and sound
   var picElement = $("#"+data.id);
   //if there's already an html element
   if (picElement.length > 0){
@@ -70,6 +88,7 @@ inbox.onmessage = function(message) {
     var el = $("<div></div>").appendTo($("#container")).attr({"id" : data.id, "class" : "partyGoer"});
     el.append("<img src ='../static/images/" + data.image + "'>");
     el.append("<audio src='../static/sounds/" + data.sound + "' autoplay loop preload='auto'>");
+    el.append(data.text).html();
   }
 };
 
@@ -85,11 +104,13 @@ outbox.onclose = function(){
 
 
 $("#input-form").on("submit", function(event) {
+  var text   = $("#input-text")[0].value;
   event.preventDefault();
   outbox.send(JSON.stringify({ 
     id : myID,
     image : myImage,
     sound : mySound,
+    text: myText,
     position : {
       x : 0,
       y : 0
