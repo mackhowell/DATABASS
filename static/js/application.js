@@ -2,7 +2,7 @@ var inbox = new ReconnectingWebSocket("ws://"+ location.host + "/receive");
 var outbox = new ReconnectingWebSocket("ws://"+ location.host + "/submit");
 
 var possibleImages = ["bass__jurassic_park.gif", "bass_windows.gif", "bass_dolls.gif", "bass_bootstrap.gif", "bass_eclipse.gif", "bass_beesandbombs.gif", "bass_daily_task.gif", "bass_tje.gif", "bass_city.gif", "bass_badblueprints.gif"];
-var possibleSounds = ["beat.wav", "synth.wav"];
+var possibleSounds = ["synth.wav", "1-kyle cuisine.wav", "sine.wav", "Violet.wav"];
 
 var myID = "";
 var myImage = "nothing.png";
