@@ -1,7 +1,7 @@
 var inbox = new ReconnectingWebSocket("ws://"+ location.host + "/receive");
 var outbox = new ReconnectingWebSocket("ws://"+ location.host + "/submit");
 
-var possibleImages = ["982897.gif", "brandmark.gif", "crate.gif", "elephant.gif", "frog.gif", "stars.gif"];
+var possibleImages = ["bass__jurassic_park.gif", "bass_windows.gif"];
 var possibleSounds = ["beat.wav", "synth.wav"];
 
 var myID = "";
@@ -32,7 +32,7 @@ function randomImage(){
   var index = parseInt(Math.random()*possibleImages.length);
   return possibleImages[index];
 }
-
+//choose a random sound file
 function randomSound(){
   var index = parseInt(Math.random()*possibleSounds.length);
   return possibleSounds[index];
@@ -57,8 +57,6 @@ $("body").click(function(event) {
 
 inbox.onmessage = function(message) {
   var data = JSON.parse(message.data);
-  // var playSound = new Audio (mySound);
-  // playSound.load();
 
   var picElement = $("#"+data.id);
   //if there's already an html element
@@ -69,18 +67,9 @@ inbox.onmessage = function(message) {
     }, 1000, "linear");
   //else make one
   } else {
-    // console.log("MYSOUND: " + mySound);
-    // playSound.play();
-    // console.log("playSound= " + playSound);
-    //first time
     var el = $("<div></div>").appendTo($("#container")).attr({"id" : data.id, "class" : "partyGoer"});
     el.append("<img src ='../static/images/" + data.image + "'>");
     el.append("<audio src='../static/sounds/" + data.sound + "' autoplay loop preload='auto'>");
-    // console.log("DATA.SOUND= " + data.sound);
-
-    // var elSound = $("<div></div>").appendTo($("#container")).attr({"id" : data.id});
-    // elSound.append("<img src ='../static/sounds/" + data.sound + "'>");
-    // elSound.play();
   }
 };
 
