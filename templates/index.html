@@ -6,10 +6,14 @@
   </head>
 
   <body>
+  <!-- ORIGINAL STUFF -->
+  <script type="text/javascript" src="static/js/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="static/js/reconnecting-websocket.min.js"></script>
+  <script type="text/javascript" src="static/js/application.js"></script>
+
   <div id="container">
-  <audio src ='static/sounds/beat.wav' autoplay loop preload=auto/>
-  <!-- <audio src="/static/sounds/beat.wav" autoplay loop preload="auto"> -->
-  <!-- <audio src="/static/sounds/beat.wav" type="audio/wav"> -->
+  <!-- Play Beat On Page Load -->
+  <!-- <audio src ='static/sounds/beat.wav' autoplay loop preload="auto"/> -->
   </div>
 <!--   <form id="input-form" class="form-inline">
         <div class="form-group">
@@ -19,10 +23,157 @@
   </form>
       <div id="chat-text">
       </div> -->
-  </div>
-    <script type="text/javascript" src="static/js/jquery-2.0.3.min.js"></script>
-    <script type="text/javascript" src="static/js/reconnecting-websocket.min.js"></script>
-    <script type="text/javascript" src="static/js/application.js"></script>
+
+<!-- SHADER STUFF -->
+<script src="static/js/Three.js"></script>
+<script src="static/js/Detector.js"></script>
+<script src="static/js/Stats.js"></script>
+<script src="static/js/OrbitControls.js"></script>
+<script src="static/js/THREEx.KeyboardState.js"></script>
+<script src="static/js/THREEx.FullScreen.js"></script>
+<script src="static/js/THREEx.WindowResize.js"></script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+varying vec2 vUv;
+void main() 
+{ 
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+
+<!-- fragment shader a.k.a. pixel shader -->
+<script id="fragmentShader" type="x-shader/x-vertex"> 
+uniform sampler2D baseTexture;
+uniform float baseSpeed;
+uniform sampler2D noiseTexture;
+uniform float noiseScale;
+uniform float alpha;
+uniform float time;
+
+varying vec2 vUv;
+void main() {
+  vec2 uvTimeShift = vUv + vec2( -2, 1.5 ) * time * baseSpeed;  
+  vec4 noiseGeneratorTimeShift = texture2D( noiseTexture, uvTimeShift );
+  vec2 uvNoiseTimeShift = vUv + noiseScale * vec2( noiseGeneratorTimeShift.r, noiseGeneratorTimeShift.b );
+  vec4 baseColor = texture2D( baseTexture, uvNoiseTimeShift );
+
+  baseColor.a = alpha;
+  gl_FragColor = baseColor;
+}  
+</script>
+
+<div id="ThreeJS" style="z-index: -1; position: absolute; left:0px; top:0px"></div>
+<script>
+
+// MAIN
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+// custom global variables
+var cube;
+
+init();
+animate();
+
+// FUNCTIONS    
+function init() {
+  // SCENE
+  scene = new THREE.Scene();
+  // CAMERA
+  var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+  var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+  camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+  scene.add(camera);
+  camera.position.set(0,100,400);
+  camera.lookAt(scene.position);
+  // RENDERER
+  if ( Detector.webgl )
+    renderer = new THREE.WebGLRenderer( {antialias:true} );
+  else
+    renderer = new THREE.CanvasRenderer(); 
+  renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+  container = document.getElementById( 'ThreeJS' );
+  container.appendChild( renderer.domElement );
+  // EVENTS
+  THREEx.WindowResize(renderer, camera);
+  THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+  // CAMERA CONTROLS
+  controls = new THREE.OrbitControls( camera, renderer.domElement );
+  // // STATS
+  // stats = new Stats();
+  // stats.domElement.style.position = 'absolute';
+  // stats.domElement.style.bottom = '0px';
+  // stats.domElement.style.zIndex = 100;
+  // container.appendChild( stats.domElement );
+  
+  ////////////
+  // CUSTOM //
+  ////////////
+  
+  /////////////////////////////////
+  // WATER SHADER THINGIE
+  var noiseTexture = new THREE.ImageUtils.loadTexture( '/static/images/cloud.png' );
+  noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping; 
+  
+  var waterTexture = new THREE.ImageUtils.loadTexture( '/static/images/grandient.png' );
+  waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping; 
+  
+  // use "this." to create global object
+  this.customUniforms2 = {
+    baseTexture:  { type: "t", value: waterTexture },
+    baseSpeed:    { type: "f", value: 1.15 },
+    noiseTexture:   { type: "t", value: noiseTexture },
+    noiseScale:   { type: "f", value: 0.8 },
+    alpha:      { type: "f", value: 0.5 },
+    time:       { type: "f", value: 1.0 }
+  };
+
+  // create custom material from the shader code above
+  //   that is within specially labeled script tags
+  var customMaterial2 = new THREE.ShaderMaterial({
+    uniforms: customUniforms2,
+    vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
+    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+  });
+ 
+  // other material properties
+  customMaterial2.side = THREE.DoubleSide;
+  customMaterial2.transparent = true;
+  
+  // apply the material to a surface
+  var flatGeometry = new THREE.PlaneGeometry( SCREEN_WIDTH/2.2, SCREEN_HEIGHT/2.2 );
+  var surface = new THREE.Mesh( flatGeometry, customMaterial2 );
+  surface.position.set(0,50,180);
+  scene.add( surface ); 
+}
+
+
+function animate() {
+  requestAnimationFrame( animate );
+  render();   
+  update();
+}
+
+function update() {
+  if ( keyboard.pressed("z") ) 
+  { 
+    // do something
+  }
+  var delta = clock.getDelta();
+  // customUniforms.time.value += delta;
+  customUniforms2.time.value += delta;
+  controls.update();
+  stats.update();
+}
+
+function render() {
+  renderer.render( scene, camera );
+}
+
+</script>
   </body>
 </html>
 
